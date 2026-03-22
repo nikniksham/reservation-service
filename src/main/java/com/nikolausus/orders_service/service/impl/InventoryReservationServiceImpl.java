@@ -12,7 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,6 +80,27 @@ public class InventoryReservationServiceImpl implements InventoryReservationServ
         Product product = findProduct(productId);
 
         return ProductDto.from(product);
+    }
+
+    @Override
+    @Transactional
+    public Long getProductId(Long reservationId) {
+        Reservation reservation = findReservation(reservationId);
+        return reservation.getProduct().getId();
+    }
+
+    @Override
+    public Map<ProductDto, Long> getTopReservedProduct(int count, LocalDateTime from) {
+        Map<Product, Long> topReserved = productRepository.findTopConfirmed(from);
+        return topReserved.entrySet().stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .limit(count)
+                .collect(Collectors.toMap(
+                        entry -> ProductDto.from(entry.getKey()),
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
     private Product findProduct(Long productId) {

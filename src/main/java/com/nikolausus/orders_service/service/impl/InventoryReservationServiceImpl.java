@@ -42,7 +42,7 @@ public class InventoryReservationServiceImpl implements InventoryReservationServ
 
     @Override
     @Transactional
-    public void createReservation(Long productId, long quantity) {
+    public long createReservation(Long productId, long quantity) {
         Product product = findProduct(productId);
         if (product.getStock() < quantity) {
             throw new IllegalArgumentException("The remaining product is less than requested");
@@ -61,6 +61,8 @@ public class InventoryReservationServiceImpl implements InventoryReservationServ
         reservationRepository.save(reservation);
 
         product.setStock(product.getStock() - quantity);
+
+        return reservation.getId();
     }
 
     @Override

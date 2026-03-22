@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = {
         "com.nikolausus.orders_service",
-        "com.nikolausus.common.retry",
+        "com.nikolausus.common",
 })
 public class OrdersServiceApplication {
 

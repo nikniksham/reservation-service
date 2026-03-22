@@ -24,8 +24,9 @@ public class ReservationController {
     ) {
         expireReservations(productId);
 
-        retryService.runWithRetry(() -> inventoryReservationService.createReservation(productId, quantity));
-        return ResponseEntity.ok("Reservation created successfully");
+        long reservationId = retryService.runReturningWithRetry(
+                () -> inventoryReservationService.createReservation(productId, quantity));
+        return ResponseEntity.ok("Reservation created successfully, id: " + reservationId);
     }
 
     @PostMapping("/reservation/{reservationId}/confirm")

@@ -9,7 +9,7 @@ public interface InventoryReservationService {
 
     public void expireReservationAndRestock(Long productId, LocalDateTime now);
 
-    public void createReservation(Long productId, long quantity);
+    public long createReservation(Long productId, long quantity);
 
     public void confirmReservation(Long reservationId);
 

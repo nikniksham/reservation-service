@@ -20,7 +20,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     @Override
     public Map<Product, Long> findTopConfirmed(LocalDateTime from) {
         String jpql = """
-        SELECT r.product, COUNT(r.id)
+        SELECT r.product, SUM(r.quantity)
         FROM Reservation r
         WHERE r.status = 'CONFIRMED'AND r.createdAt >= :from
         GROUP BY r.product

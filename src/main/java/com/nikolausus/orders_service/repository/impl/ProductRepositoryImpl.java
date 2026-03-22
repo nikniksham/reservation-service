@@ -1,6 +1,5 @@
 package com.nikolausus.orders_service.repository.impl;
 
-import com.nikolausus.orders_service.dto.ProductDto;
 import com.nikolausus.orders_service.entity.Product;
 import com.nikolausus.orders_service.repository.ProductRepositoryCustom;
 import jakarta.persistence.EntityManager;
@@ -19,7 +18,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     private final EntityManager em;
 
     @Override
-    public Map<ProductDto, Long> findTopConfirmed(LocalDateTime from) {
+    public Map<Product, Long> findTopConfirmed(LocalDateTime from) {
         String jpql = """
         SELECT r.product, COUNT(r.id)
         FROM Reservation r
@@ -33,7 +32,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         return results.stream()
                 .collect(Collectors.toMap(
-                        row -> ProductDto.from((Product) row[0]),
+                        row -> (Product) row[0],
                         row -> (Long) row[1]
                 ));
     }

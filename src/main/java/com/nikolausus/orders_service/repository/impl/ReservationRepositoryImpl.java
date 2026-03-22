@@ -16,23 +16,17 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
     private final EntityManager em;
 
     @Override
-    public long markExpiredReservationAndGetQuantitySum(Long productId, LocalDateTime now) {
+    public List<Reservation> findAllExpiredReservation(Long productId, LocalDateTime now) {
         String jpql = """
         SELECT r
         FROM Reservation r
         WHERE r.status = 'ACTIVE' AND r.product.id = :productId AND r.expiresAt < :now
         """;
 
-        List<Reservation> expired = em.createQuery(jpql, Reservation.class)
+        return em.createQuery(jpql, Reservation.class)
                 .setParameter("productId", productId)
                 .setParameter("now", now)
                 .getResultList();
-
-        expired.forEach(r -> r.setStatus(Reservation.Status.EXPIRED));
-
-        return expired.stream()
-                .mapToLong(Reservation::getQuantity)
-                .sum();
     }
 
 }

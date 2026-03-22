@@ -1,6 +1,6 @@
-package com.nikolausus.orders_service.reservation.entity;
+package com.nikolausus.orders_service.entity;
 
-import com.nikolausus.orders_service.product.entity.Product;
+import com.nikolausus.orders_service.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 

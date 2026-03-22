@@ -1,7 +1,6 @@
-package com.nikolausus.orders_service.reservation.dto;
+package com.nikolausus.orders_service.dto;
 
-import com.nikolausus.orders_service.reservation.entity.Reservation;
-import com.nikolausus.orders_service.product.dto.ProductDto;
+import com.nikolausus.orders_service.entity.Reservation;
 import lombok.Builder;
 import lombok.Value;
 

@@ -1,4 +1,4 @@
-package com.nikolausus.orders_service.product.entity;
+package com.nikolausus.orders_service.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

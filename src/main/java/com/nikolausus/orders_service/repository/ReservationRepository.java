@@ -1,6 +1,6 @@
-package com.nikolausus.orders_service.reservation.repository;
+package com.nikolausus.orders_service.repository;
 
-import com.nikolausus.orders_service.reservation.entity.Reservation;
+import com.nikolausus.orders_service.entity.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long>, ReservationRepositoryCustom {

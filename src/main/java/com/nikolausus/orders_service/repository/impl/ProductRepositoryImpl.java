@@ -1,8 +1,8 @@
-package com.nikolausus.orders_service.product.repository.impl;
+package com.nikolausus.orders_service.repository.impl;
 
-import com.nikolausus.orders_service.product.dto.ProductDto;
-import com.nikolausus.orders_service.product.entity.Product;
-import com.nikolausus.orders_service.product.repository.ProductRepositoryCustom;
+import com.nikolausus.orders_service.dto.ProductDto;
+import com.nikolausus.orders_service.entity.Product;
+import com.nikolausus.orders_service.repository.ProductRepositoryCustom;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

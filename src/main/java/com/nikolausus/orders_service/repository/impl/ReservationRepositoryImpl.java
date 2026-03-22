@@ -1,10 +1,8 @@
-package com.nikolausus.orders_service.reservation.repository.impl;
+package com.nikolausus.orders_service.repository.impl;
 
-import com.nikolausus.orders_service.product.entity.Product;
-import com.nikolausus.orders_service.reservation.entity.Reservation;
-import com.nikolausus.orders_service.reservation.repository.ReservationRepositoryCustom;
+import com.nikolausus.orders_service.entity.Reservation;
+import com.nikolausus.orders_service.repository.ReservationRepositoryCustom;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

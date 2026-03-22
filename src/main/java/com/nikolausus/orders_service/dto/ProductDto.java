@@ -1,6 +1,6 @@
-package com.nikolausus.orders_service.product.dto;
+package com.nikolausus.orders_service.dto;
 
-import com.nikolausus.orders_service.product.entity.Product;
+import com.nikolausus.orders_service.entity.Product;
 import lombok.Builder;
 import lombok.Value;
 

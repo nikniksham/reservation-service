@@ -1,6 +1,6 @@
-package com.nikolausus.orders_service.product.repository;
+package com.nikolausus.orders_service.repository;
 
-import com.nikolausus.orders_service.product.dto.ProductDto;
+import com.nikolausus.orders_service.dto.ProductDto;
 
 import java.time.LocalDateTime;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.nikolausus.orders_service.reservation.repository;
+package com.nikolausus.orders_service.repository;
 
 
 import java.time.LocalDateTime;

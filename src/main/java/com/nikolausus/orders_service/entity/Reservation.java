@@ -1,12 +1,14 @@
 package com.nikolausus.orders_service.entity;
 
-import com.nikolausus.orders_service.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Reservation {
 
@@ -36,5 +38,9 @@ public class Reservation {
         CONFIRMED,
         EXPIRED,
         CANCELLED
+    }
+
+    public static LocalDateTime getExpiresTime(LocalDateTime now) {
+        return now.plusMinutes(10);
     }
 }

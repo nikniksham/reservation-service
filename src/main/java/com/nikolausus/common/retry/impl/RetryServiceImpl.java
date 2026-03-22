@@ -1,27 +1,16 @@
-package com.nikolausus.orders_service.service;
+package com.nikolausus.common.retry.impl;
 
+import com.nikolausus.common.retry.RetryService;
 import jakarta.persistence.OptimisticLockException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
-@RequiredArgsConstructor
-public class ReservationRetryService {
+public class RetryServiceImpl implements RetryService {
 
-    private final InventoryReservationService inventoryService;
-
-    public void expireReservationAndRestockWithRetry(Long productId, LocalDateTime now) {
-        executeWithRetry(() -> inventoryService.expireReservationAndRestock(productId, now));
-    }
-
-    public void createReservationWithRetry(Long productId, long quantity) {
-        executeWithRetry(() -> inventoryService.createReservation(productId, quantity));
-    }
-
-    private void executeWithRetry(Runnable action) {
+    @Override
+    public void runWithRetry(Runnable action) {
         int attempt = 0;
         int maxAttempts = 5;
         while (true) {

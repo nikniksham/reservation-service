@@ -55,3 +55,15 @@ WHERE status = 'ACTIVE';
 Для запуска необходимо выполнить в консоли из корня проекта:
 1) `docker compose build`
 2) `docker compose up`
+
+Готовые curl для теста (создать бронь / подтверждение по id / отклонение по id):
+```shell
+curl -X POST "http://localhost:8080/reservations?productId=XXX&quantity=YYY"
+curl -X POST "http://localhost:8080/reservations/{reservationId}/confirm"
+curl -X POST "http://localhost:8080/reservations/{reservationId}/cancel"
+```
+
+### Также
+1) Возвращаю в ответе из сервисов dto-шки
+2) Разделил абстракции и реализации
+3) Красиво написал 🙂

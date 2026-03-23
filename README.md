@@ -1,4 +1,4 @@
-# Spring + PostgreSQL + Flyway
+# Spring + PostgreSQL (OptimisticLocking) + Flyway + Integration tests
 
 ### Краткое представление
 Проект представляет собой распределенный сервис резервирования товаров со следующими правилами:

@@ -21,6 +21,8 @@
 ![img.png](img/first_poyasnenie.png)
 ![img.png](img/second_poyasnenie.png)
 
+(Можно было бы использовать @Retryable на методах сервиса, но мне было интересно разобраться, как именно делается retry)
+
 
 
 ### Индексы

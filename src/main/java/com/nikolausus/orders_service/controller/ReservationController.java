@@ -17,7 +17,7 @@ public class ReservationController {
     private final InventoryReservationService inventoryReservationService;
     private final RetryService retryService;
 
-    @PostMapping("/reservation")
+    @PostMapping("/reservations")
     public ResponseEntity<String> createReservation(
             @RequestParam Long productId,
             @RequestParam long quantity
@@ -26,10 +26,10 @@ public class ReservationController {
 
         long reservationId = retryService.runReturningWithRetry(
                 () -> inventoryReservationService.createReservation(productId, quantity));
-        return ResponseEntity.ok("Reservation created successfully, id: " + reservationId);
+        return ResponseEntity.ok("" + reservationId);
     }
 
-    @PostMapping("/reservation/{reservationId}/confirm")
+    @PostMapping("/reservations/{reservationId}/confirm")
     public ResponseEntity<String> confirmReservation(
             @PathVariable Long reservationId
     ) {
@@ -38,6 +38,17 @@ public class ReservationController {
         inventoryReservationService.confirmReservation(reservationId);
 
         return ResponseEntity.ok("Reservation confirmed successfully");
+    }
+
+    @PostMapping("/reservations/{reservationId}/cancel")
+    public ResponseEntity<String> cancelReservation(
+            @PathVariable Long reservationId
+    ) {
+        expireReservations(inventoryReservationService.getProductId(reservationId));
+
+        inventoryReservationService.cancelReservation(reservationId);
+
+        return ResponseEntity.ok("Reservation cancelled successfully");
     }
 
     @GetMapping("/products/{productId}")

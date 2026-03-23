@@ -15,6 +15,8 @@ public interface InventoryReservationService {
 
     public void confirmReservation(Long reservationId);
 
+    public void cancelReservation(Long reservationId);
+
     public ProductDto getProduct(Long productId);
 
     public Long getProductId(Long reservationId);

@@ -40,7 +40,9 @@ public class Reservation {
         CANCELLED
     }
 
+    public static final int expireDelayInMinutes = 10;
+
     public static LocalDateTime getExpiresTime(LocalDateTime now) {
-        return now.plusMinutes(10);
+        return now.plusMinutes(expireDelayInMinutes);
     }
 }

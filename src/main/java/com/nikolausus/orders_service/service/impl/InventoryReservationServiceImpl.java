@@ -4,6 +4,7 @@ import com.nikolausus.orders_service.dto.ProductDto;
 import com.nikolausus.orders_service.entity.Product;
 import com.nikolausus.orders_service.entity.Reservation;
 import com.nikolausus.orders_service.exception.NotEnoughStockException;
+import com.nikolausus.orders_service.exception.ReservationCannotBeCancelled;
 import com.nikolausus.orders_service.exception.ReservationCannotBeConfirmed;
 import com.nikolausus.orders_service.repository.ProductRepository;
 import com.nikolausus.orders_service.repository.ReservationRepository;
@@ -88,6 +89,20 @@ public class InventoryReservationServiceImpl implements InventoryReservationServ
         }
 
         reservation.setStatus(Reservation.Status.CONFIRMED);
+    }
+
+    @Override
+    @Transactional
+    public void cancelReservation(Long reservationId) {
+        Reservation reservation = findReservation(reservationId);
+        if (reservation.getStatus() != Reservation.Status.ACTIVE) {
+            throw new ReservationCannotBeCancelled(reservationId);
+        }
+
+        reservation.setStatus(Reservation.Status.CANCELLED);
+
+        Product product = reservation.getProduct();
+        product.setStock(product.getStock() + reservation.getQuantity());
     }
 
     @Override

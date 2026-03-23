@@ -1,5 +1,6 @@
 package com.nikolausus.common.exception;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -9,8 +10,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RuntimeException.class)
     @ResponseBody
-    public String handleRuntimeException(RuntimeException ex)  {
-        return "<h1>Произошла ошибка: " + ex.getMessage() + "</h1>";
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex)  {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
 }

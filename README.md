@@ -1,7 +1,7 @@
 # Spring + PostgreSQL (OptimisticLocking) + Flyway + Integration tests
 
 ### Краткое представление
-Проект представляет собой распределенный сервис резервирования товаров со следующими правилами:
+Проект представляет собой CRUD сервис резервирования товаров со следующими правилами:
 1) Есть `product`, каждый из которых имеет некоторый stock (количество на складе)
 2) Можно создавать `reservation` продукта (`POST /reservations?productId=XXX&quantity=YYY`):
    - `reservation.quantity` должен быть <= `product.stock`

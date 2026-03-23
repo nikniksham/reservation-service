@@ -37,6 +37,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         productRepository.deleteAll();
     }
 
+    /**
+     * Резервация создается успешно при существующем продукте и quantity <= stock
+     */
     @Test
     void shouldCreateReservationSuccessfully() throws Exception {
         Long productId = createProduct("test", 10);
@@ -51,6 +54,22 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         assertThat(reservations.getFirst().getStatus()).isEqualTo(Reservation.Status.ACTIVE);
     }
 
+    /**
+     * Резервация не создается, тк product не существует
+     */
+    @Test
+    void shouldFailWhenNotProductDontExists() throws Exception {
+        mockMvc.perform(post("/reservations")
+                        .param("productId", String.valueOf(1))
+                        .param("quantity", "5"))
+                .andExpect(status().isBadRequest());
+
+        assertThat(reservationRepository.findAll()).hasSize(0);
+    }
+
+    /**
+     * Резервация не создается, тк quantity > stock
+     */
     @Test
     void shouldFailWhenNotEnoughStock() throws Exception {
         Long productId = createProduct("test", 10);
@@ -59,8 +78,13 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
                         .param("productId", String.valueOf(productId))
                         .param("quantity", "500"))
                 .andExpect(status().isBadRequest());
+
+        assertThat(reservationRepository.findAll()).hasSize(0);
     }
 
+    /**
+     * После создания резервации stock продукта должен уменьшиться
+     */
     @Test
     void shouldDecreaseStockOnCreateReservation() throws Exception {
         Long productId = createProduct("test", 10);
@@ -73,6 +97,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         assertThat(product.getStock()).isEqualTo(5);
     }
 
+    /**
+     * После создания и отмены резервации stock продукта должен остаться прежним
+     */
     @Test
     void shouldBeEqualsStockAfterCreateAndCancelReservation() throws Exception {
         Long productId = createProduct("test", 10);
@@ -88,6 +115,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         assertThat(product.getStock()).isEqualTo(10);
     }
 
+    /**
+     * После отмены существующей резервации stock должен увеличиться
+     */
     @Test
     void shouldIncreaseStockOnCancelReservation() throws Exception {
         Long productId = createProduct("test", 10);
@@ -97,6 +127,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         assertThat(product.getStock()).isEqualTo(20);
     }
 
+    /**
+     * Просроченную резервацию нельзя подтвердить
+     */
     @Test
     void shouldFailToConfirmExpiredReservation() throws Exception {
         Long productId = createProduct("test", 10);
@@ -109,6 +142,10 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         confirmReservationIsBad(reservationId);
     }
 
+    /**
+     * Просроченная резервация (now > reservation.expires_at) со статусом ACTIVE нельзя подтвердить
+     * Также проверяем, что статус резервации автоматически изменился
+     */
     @Test
     void shouldFailToConfirmExpiredReservationAutoSwitchReservationStatus() throws Exception {
         Long productId = createProduct("test", 10);
@@ -123,6 +160,10 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
                 .isEqualTo(Reservation.Status.EXPIRED);
     }
 
+    /**
+     * Просроченная резервация со статусом ACTIVE при попытке подтверждения автоматически становится EXPIRED
+     * Stock продукта повышается, тк резервация была "активна"
+     */
     @Test
     void shouldIncreaseStockAfterTryToConfirmExpiredReservation() throws Exception {
         Long productId = createProduct("test", 10);
@@ -138,6 +179,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         assertThat(productRepository.findById(productId).orElseThrow().getStock()).isEqualTo(20);
     }
 
+    /**
+     * Резервация после подтверждения должна иметь статус CONFORMED
+     */
     @Test
     void reservationShouldHaveStatusConfirm() throws Exception {
         Long productId = createProduct("test", 10);
@@ -149,6 +193,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         assertThat(reservation.getStatus()).isEqualTo(Reservation.Status.CONFIRMED);
     }
 
+    /**
+     * Резервацию нельзя подтвердить дважды (второе подтверждение выкидывает ошибку)
+     */
     @Test
     void shouldFailToConfirmTwice() throws Exception {
         Long productId = createProduct("test", 10);
@@ -162,6 +209,10 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         confirmReservationIsBad(reservationId);
     }
 
+    /**
+     * Проверка ручки /products/top-reserved
+     * Результат приходит в формате сортированного (по SUM(reservation.quantity) со статусом CONFIRMED) json
+     */
     @Test
     void shouldReturnTopReservedProducts() throws Exception {
         Long p1 = createProduct("product_1", 100);

@@ -62,6 +62,11 @@ mvn clean test
 1) `docker compose build`
 2) `docker compose up`
 
+После запуска приложение будет доступно по адресу: `http://localhost:8080`
+
+Остановка:
+1) `docker compose down`
+
 Готовые curl для теста (создать бронь / подтверждение по id / отклонение по id):
 ```shell
 curl -X POST "http://localhost:8080/reservations?productId=XXX&quantity=YYY"

@@ -119,6 +119,23 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
                 Reservation.Status.ACTIVE);
 
         confirmReservationIsBad(reservationId);
+        assertThat(reservationRepository.findById(reservationId).orElseThrow().getStatus())
+                .isEqualTo(Reservation.Status.EXPIRED);
+    }
+
+    @Test
+    void shouldIncreaseStockAfterTryToConfirmExpiredReservation() throws Exception {
+        Long productId = createProduct("test", 10);
+        Long reservationId = createReservation(
+                productId,
+                10,
+                LocalDateTime.now().minusMinutes(Reservation.expireDelayInMinutes + 1),
+                Reservation.Status.ACTIVE);
+
+        confirmReservationIsBad(reservationId);
+        assertThat(reservationRepository.findById(reservationId).orElseThrow().getStatus())
+                .isEqualTo(Reservation.Status.EXPIRED);
+        assertThat(productRepository.findById(productId).orElseThrow().getStock()).isEqualTo(20);
     }
 
     @Test

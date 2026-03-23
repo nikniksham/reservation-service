@@ -3,6 +3,7 @@ package com.nikolausus.orders_service.service.impl;
 import com.nikolausus.orders_service.dto.ProductDto;
 import com.nikolausus.orders_service.entity.Product;
 import com.nikolausus.orders_service.entity.Reservation;
+import com.nikolausus.orders_service.exception.NotEnoughStockException;
 import com.nikolausus.orders_service.exception.ReservationCannotBeConfirmed;
 import com.nikolausus.orders_service.repository.ProductRepository;
 import com.nikolausus.orders_service.repository.ReservationRepository;
@@ -45,7 +46,7 @@ public class InventoryReservationServiceImpl implements InventoryReservationServ
     public long createReservation(Long productId, long quantity) {
         Product product = findProduct(productId);
         if (product.getStock() < quantity) {
-            throw new IllegalArgumentException("The remaining product is less than requested");
+            throw new NotEnoughStockException();
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -63,6 +64,19 @@ public class InventoryReservationServiceImpl implements InventoryReservationServ
         product.setStock(product.getStock() - quantity);
 
         return reservation.getId();
+    }
+
+    @Override
+    @Transactional
+    public long createProduct(String name, long stock) {
+        Product product = Product.builder()
+                .name(name)
+                .stock(stock)
+                .build();
+
+        productRepository.save(product);
+
+        return product.getId();
     }
 
     @Override

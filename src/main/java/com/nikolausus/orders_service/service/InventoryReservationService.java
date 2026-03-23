@@ -11,6 +11,8 @@ public interface InventoryReservationService {
 
     public long createReservation(Long productId, long quantity);
 
+    public long createProduct(String name, long stock);
+
     public void confirmReservation(Long reservationId);
 
     public ProductDto getProduct(Long productId);

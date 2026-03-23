@@ -218,6 +218,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         Long p1 = createProduct("product_1", 100);
         Long p2 = createProduct("product_2", 100);
         Long p3 = createProduct("product_3", 100);
+        Long p4 = createProduct("product_4", 100);
+        Long p5 = createProduct("product_5", 100);
+        Long p6 = createProduct("product_6", 100);
 
         confirmReservationIsOk(createReservation(p1, 5, LocalDateTime.now(), Reservation.Status.ACTIVE));
         confirmReservationIsOk(createReservation(p1, 5, LocalDateTime.now(), Reservation.Status.ACTIVE));
@@ -225,6 +228,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         confirmReservationIsOk(createReservation(p3, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
         confirmReservationIsOk(createReservation(p3, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
         confirmReservationIsOk(createReservation(p3, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
+        confirmReservationIsOk(createReservation(p4, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
+        confirmReservationIsOk(createReservation(p5, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
+        confirmReservationIsOk(createReservation(p6, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -240,6 +246,9 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         );
 
         List<String> keys = result.keySet().stream().toList();
+
+        // Проверка, что в ответе не более 5 продуктов
+        assertThat(keys.size()).isLessThanOrEqualTo(5);
 
         assertThat(keys.get(0)).contains("id=" + p2);
         assertThat(result.get(keys.get(0))).isEqualTo(60);

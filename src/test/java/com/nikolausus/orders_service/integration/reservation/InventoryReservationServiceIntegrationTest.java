@@ -212,6 +212,7 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
     /**
      * Проверка ручки /products/top-reserved
      * Результат приходит в формате сортированного (по SUM(reservation.quantity) со статусом CONFIRMED) json
+     * Также проверяется, что старые (созданные больше чем 24 часа назад) резервации не влияют на результат
      */
     @Test
     void shouldReturnTopReservedProducts() throws Exception {
@@ -231,6 +232,8 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         confirmReservationIsOk(createReservation(p4, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
         confirmReservationIsOk(createReservation(p5, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
         confirmReservationIsOk(createReservation(p6, 1, LocalDateTime.now(), Reservation.Status.ACTIVE));
+        // Старая резервация (createdAt > чем сутки назад), НЕ виляет на результат top-confirmed
+        createReservation(p6, 1000, LocalDateTime.now().minusDays(2), Reservation.Status.CONFIRMED);
 
         ObjectMapper mapper = new ObjectMapper();
 

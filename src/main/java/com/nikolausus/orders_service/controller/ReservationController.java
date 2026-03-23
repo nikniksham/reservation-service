@@ -46,7 +46,7 @@ public class ReservationController {
     ) {
         expireReservations(inventoryReservationService.getProductId(reservationId));
 
-        inventoryReservationService.cancelReservation(reservationId);
+        retryService.runWithRetry(() -> inventoryReservationService.cancelReservation(reservationId));
 
         return ResponseEntity.ok("Reservation cancelled successfully");
     }

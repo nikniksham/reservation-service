@@ -67,7 +67,7 @@ mvn clean test
 После запуска приложение будет доступно по адресу: `http://localhost:8080`
 
 Остановка:
-1) `docker compose down`
+1) `docker compose down -v`
 
 Готовые curl для теста (создать бронь / подтверждение по id / отклонение по id):
 ```shell

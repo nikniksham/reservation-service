@@ -13,8 +13,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -261,6 +266,61 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
 
         assertThat(keys.get(2)).contains("id=" + p3);
         assertThat(result.get(keys.get(2))).isEqualTo(3);
+    }
+
+    /**
+     * Тест, проверяющий работоспособность retry
+     * Для этого создается 30 потоков, которые одновременно пытаются зарезервировать товар по 1 ед каждый (всего stock = 10)
+     * Если в ручке контроллера сделать вызов не через retry сервис, а напрямую, то этот тест упадет
+     */
+    @Test
+    void shouldHandleConcurrentReservationsWithOptimisticLocking() throws Exception {
+        int stock = 10, threadCount = 30;
+        Long productId = createProduct("test", stock);
+
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch readyLatch = new CountDownLatch(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threadCount);
+
+        List<Boolean> results = Collections.synchronizedList(new ArrayList<>());
+
+        for (int i = 0; i < threadCount; ++i) {
+            executor.submit(() -> {
+                try {
+                    readyLatch.countDown();
+                    startLatch.await();
+
+                    mockMvc.perform(post("/reservations")
+                                    .param("productId", String.valueOf(productId))
+                                    .param("quantity", "1"))
+                            .andExpect(status().isOk());
+                    results.add(true);
+                } catch (Exception e) {
+                    results.add(false);
+                } finally {
+                    doneLatch.countDown();
+                }
+            });
+        }
+
+        readyLatch.await();
+        startLatch.countDown();
+
+        doneLatch.await();
+        executor.shutdown();
+
+        long successCount = results.stream().filter(Boolean::booleanValue).count();
+
+        Product product = productRepository.findById(productId).orElseThrow();
+        List<Reservation> reservations = reservationRepository.findAll();
+
+        System.out.println("Stock: " + product.getStock() + ", successCount: " + successCount);
+        assertThat(product.getStock()).isEqualTo(0); // не ушло в минус
+        assertThat(successCount).isLessThanOrEqualTo(stock); // кол-во успешных резерваций меньше или равно количеству товара
+        assertThat(stock - product.getStock()).isEqualTo(successCount); // сумма успешных резерваций равна уменьшению stock
+        assertThat(reservations.size()).isEqualTo(successCount); // кол-во созданных резерваций равно количеству успешных запросов
+
     }
 
     private Long createProduct(String name, long stock) {

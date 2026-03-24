@@ -26,6 +26,7 @@ public class ReservationController {
 
         long reservationId = retryService.runReturningWithRetry(
                 () -> inventoryReservationService.createReservation(productId, quantity));
+//        long reservationId = inventoryReservationService.createReservation(productId, quantity);
         return ResponseEntity.ok("" + reservationId);
     }
 

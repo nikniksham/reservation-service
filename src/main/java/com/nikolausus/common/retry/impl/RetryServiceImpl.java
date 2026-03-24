@@ -1,7 +1,7 @@
 package com.nikolausus.common.retry.impl;
 
 import com.nikolausus.common.retry.RetryService;
-import jakarta.persistence.OptimisticLockException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 @Service
 public class RetryServiceImpl implements RetryService {
 
-    private static final int MAX_ATTEMPTS = 5;
+    private static final int MAX_ATTEMPTS = 10;
 
     /**
      * Универсальный метод повторения с ретраем для действий с результатом и без.
@@ -18,15 +18,13 @@ public class RetryServiceImpl implements RetryService {
      */
     public <T> T runWithRetry(Supplier<T> action) {
         int attempt = 0;
-
         while (true) {
             try {
                 return action.get(); // возвращаем результат типа T (может быть null)
-            } catch (OptimisticLockException ex) {
+            } catch (ObjectOptimisticLockingFailureException ex) { // заменил ошибку на корректную
                 if (++attempt > MAX_ATTEMPTS) {
                     throw ex;
                 }
-
                 // backoff с jitter
                 try {
                     Thread.sleep(ThreadLocalRandom.current().nextLong(50, 100));

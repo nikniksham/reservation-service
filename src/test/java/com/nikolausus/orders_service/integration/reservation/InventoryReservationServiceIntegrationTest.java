@@ -316,8 +316,8 @@ public class InventoryReservationServiceIntegrationTest extends BaseIntegrationT
         List<Reservation> reservations = reservationRepository.findAll();
 
         System.out.println("Stock: " + product.getStock() + ", successCount: " + successCount);
-        assertThat(product.getStock()).isEqualTo(0); // не ушло в минус
-        assertThat(successCount).isLessThanOrEqualTo(stock); // кол-во успешных резерваций меньше или равно количеству товара
+        assertThat(product.getStock()).isGreaterThanOrEqualTo(0); // не ушло в минус
+        assertThat(successCount).isEqualTo(stock); // кол-во успешных резерваций равно количеству товара
         assertThat(stock - product.getStock()).isEqualTo(successCount); // сумма успешных резерваций равна уменьшению stock
         assertThat(reservations.size()).isEqualTo(successCount); // кол-во созданных резерваций равно количеству успешных запросов
 
